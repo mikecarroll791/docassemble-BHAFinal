@@ -1,0 +1,216 @@
+include:
+  - docassemble.MAVirtualCourt:basic-questions.yml
+---
+comment: |
+  The metadata section controls the tab title and saved interview title. You can delete this section if you include this YAML file in another YAML file.
+metadata:
+  title: |
+   BHA Authorization of Release English
+  short title: |
+   BHA Authorization 
+---
+comment: |
+  This section is used by MAVirtualCourts to control how some of the questions work.
+mandatory: True
+code: |
+  interview_metadata # make sure we initialize the object
+  if not defined("interview_metadata['BHA_Authorization_of_Release_English']"):
+    interview_metadata.initializeObject('BHA_Authorization_of_Release_English')
+  interview_metadata['BHA_Authorization_of_Release_English'].update({
+    'title': 'BHA Authorization of Release English',
+    'short title': 'BHA Authorization of Release English',
+    'description': 'BHA Authorization of Release English',
+    'original_form': '',
+    'allowed courts': [
+    ],
+    'categories': [
+      'Housing',
+    ],
+    'logic block variable': 'BHA_Authorization_of_Release_English',
+    'attachment block variable': 'BHA_Authorization_of_Release_English_attachment',
+    'typical role': 'plaintiff',
+  })
+---
+features:
+  navigation: True
+---
+sections:
+  - review_BHA_Authorization_of_Release_English: Review your answers
+---
+id: interview_order_BHA_Authorization_of_Release_English
+code: |
+  # This is a placeholder to control logic flow in this interview 
+  ma_access_intro
+  BHA_Authorization_of_Release_English_intro
+  # Set the allowed courts for this interview
+  allowed_courts = interview_metadata["BHA_Authorization_of_Release_English"]["allowed courts"]
+  nav.set_section('review_BHA_Authorization_of_Release_English')
+  user_role = 'plaintiff'
+  users[0]
+  users[0].address.address
+  user_social_security
+  agency
+  agency_phone_number
+  agency_relationship
+  client_control_number
+  set_progress(14.29)
+  # Pre-canned preview screen
+  basic_questions_signature_flow
+  users[0].signature
+  BHA_Authorization_of_Release_English = True
+---
+comment: |
+  This question is used to introduce your interview. Please customize
+id: Bha authorization of release english
+continue button field: BHA_Authorization_of_Release_English_intro
+question: |
+  Boston Housing Authority (BHA) Authorization of Release Form
+subquestion: |
+  This form allows you to grant your attorney access to inspect and/or copy your records.
+---
+id: mass access intro
+continue button field: ma_access_intro
+Question: |
+  Prepare and download your Boston Housing Authority (BHA) Authrorization of Release Form
+subquestion: |
+  The MassAccess Project can help **Massachusetts residents** complete and download forms in 3 steps:  
+  
+  Step 1. Answer questions that will fill in your form for you.  
+  Step 2. Preview the completed form.  
+  Step 3. Download and print the final form. You will need to deliver it
+  to the court on your own.
+ 
+  
+  If you do not live in Massachusetts, you may be able to get help for your 
+  legal problem from [your local legal aid 
+  provider](https://www.lsc.gov/what-legal-aid/find-legal-aid).
+  
+  Tap the {green words} in any screen for a definition or more information.
+  
+  If you have questions about this form or the court process, 
+  call the Trial Court’s Emergency HelpLine:  
+  833-91-COURT (833-912-6878)  
+  Monday-Friday  
+  8:30am - 4:30pm
+
+  % if chat_partners_available().help:
+  Live help is currently available in this interview. Click the speech bubble
+  (:comment-alt:) in the navigation bar to connect to a live advocate for help.
+  % endif
+
+fields:
+  - To continue, you must accept the [terms of use](https://massaccess.suffolklitlab.org/privacy/): acknowledged_information_use
+    datatype: checkboxes
+    none of the above: False    
+    minlength: 1
+    choices:
+      - I accept the terms of use.
+    validation messages:
+      minlength: |
+        You cannot continue unless you agree to the terms of use.        
+terms:
+  green words: |
+    Green words are legal terms or a short way of referring to something that needs more explanation. The definition or explanation pops up when you tap the green words.
+right: |
+  % if user_has_saved_answers:
+  ${fa_icon("bell", color="primary", size="sm")}
+  Saved answers available!  
+  
+  ${action_button_html(url_action('load_answer'), icon="folder-open", label=word("View answers"), size="sm" )}
+  % endif    
+---
+id: Review your form before you sign it
+continue button field: BHA_Authorization_of_Release_English_preview_question
+question: |
+  Review your form before you sign it
+subquestion: |
+  Here is a preview of the form you'll sign on the next page. 
+  
+   ${ pdf_concatenate(BHA_Authorization_of_Release_English_attachment['preview'], filename='BHA_Authorization_of_Release_English.pdf')}
+---
+id: User Information
+question: |
+  User Information
+fields:
+  - 'What is your social security number': user_social_security 
+    datatype: number
+---
+id: Agency Information
+question: |
+  Agency Information
+subquestion: |
+  Placeholder text
+fields:
+  - 'Client control number': client_control_number
+    datatype: number
+  - 'Agency phone number': agency_phone_number
+    datatype: number
+  - 'Agency': agency
+  - 'Agency relationship': agency_relationship
+---
+progress: 100
+mandatory: True
+id: Your form is ready to download and file
+question: |
+  Your form is ready to download and file
+subquestion: |
+  Thank you ${users}. Your form is ready to download and deliver.
+  
+  Below is a preview of your form.
+  
+  ${pdf_concatenate(BHA_Authorization_of_Release_English_attachment['final'], filename='BHA_Authorization_of_Release_English.pdf') }
+need: BHA_Authorization_of_Release_English
+attachment code: BHA_Authorization_of_Release_English_attachment['final']
+---
+objects:
+  - BHA_Authorization_of_Release_English_attachment: DADict
+---
+attachment:
+    variable name: BHA_Authorization_of_Release_English_attachment[i]
+    name: Bha authorization of release english
+    filename: Bha_authorization_of_release_english
+    docx template file: BHA_Authorization_of_Release_English.docx
+---
+id: BHA_Authorization_of_Release_English review screen
+event: review_BHA_Authorization_of_Release_English
+question: |
+  Placeholder Review Screen
+subquestion: |
+  Edit your answers below
+review: 
+  - Edit: user[0]
+    button: |
+      User[0]:
+      ${ user[0] }
+  - Edit: client_control_number
+    button: |
+      Client control number:
+      ${ client_control_number }
+  - Edit: agency_phone_number
+    button: |
+      Agency phone number:
+      ${ agency_phone_number }
+  - Edit: agency
+    button: |
+      Agency:
+      ${ agency }
+  - Edit: user_social_security
+    button: |
+      User social security:
+      ${ user_social_security }
+  - Edit: agency_relationship
+    button: |
+      Agency relationship:
+      ${ agency_relationship }
+  - Edit: users[0].name.first
+    button: |
+      users[0]:
+      ${ users[0] }
+  - Edit: users[0].address.address
+    button: |
+      users[0].address.address:
+      ${ users[0].address.address }
+  - Edit: users[0].signature
+    button: |
+      users[0].signature:
+      ${ users[0].signature }
